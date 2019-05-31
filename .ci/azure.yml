@@ -1,0 +1,23 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'macOS-latest'
+
+steps:
+- task: PythonScript@0
+  inputs:
+    scriptSource: 'filePath'
+    scriptPath: '$(Build.SourcesDirectory)/android-sysroot.py'
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.SourcesDirectory)/sysroot'
+    includeRootFolder: false
+    archiveType: 'tar'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/sysroot-$(Build.BuildId).tar.gz'
+    replaceExistingArchive: true
+    verbose: true
+- task: PublishBuildArtifacts@1
+  inputs:
+    ArtifactName: 'sysroot'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/sysroot-$(Build.BuildId).tar.gz'
